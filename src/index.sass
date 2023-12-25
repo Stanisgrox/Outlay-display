@@ -161,10 +161,19 @@ table
   border: 1px solid $borders
   padding: 10px
   color: $white
+  width: calc( 100% - 24px )
 
 .table-input::placeholder
   color: red
   color: #71717A
+
+.table-input:read-only
+  border: none
+  margin-bottom: 1px
+  margin-top: 1px
+
+.table-input:read-only:focus
+  outline: none
 
 //FIXES
 input::-webkit-outer-spin-button,

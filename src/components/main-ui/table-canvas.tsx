@@ -2,6 +2,8 @@ import { useEffect, useState } from "react"
 import { CRUDdata, FullData, createRow, deleteRow, getRows } from "../../functions/api-wrapper";
 import { WorkHeader } from "../work-header";
 import { TableInput } from "./input";
+import { EditableRow } from "./editable-row";
+
 
 export const TableCanvas = () => {
     const [data, setData] = useState<FullData[]>();
@@ -46,6 +48,12 @@ export const TableCanvas = () => {
         setData(await deleteRow(Number (id)));
     }
     
+    async function onEnter(event: React.KeyboardEvent<HTMLInputElement>, key: string) {
+        if (event.key === 'Enter') {
+            uploadRow(key);
+        } else return;
+    }
+
     return (
         <div>
             <WorkHeader />
@@ -75,33 +83,13 @@ export const TableCanvas = () => {
                     </thead>
                     <tbody>
                         {data?.map((row: FullData) => (
-                            <tr className="bordered-B" key = {row.id}>
-                                <td className="tablecontent">
-                                    <div className="button-wrapper flex">
-                                        <button>
-                                            <img src="/assets/file-ico.svg" alt="ico" />
-                                        </button>
-                                        <button onClick={() => deletedRow(row.id!)}>
-                                            <img src="/assets/trash-ico.svg" alt="ico" />
-                                        </button>
-                                    </div>
-                                </td>
-                                <td className="tablecontent">
-                                    {row.rowName}
-                                </td>
-                                <td className="tablecontent">
-                                    {row.salary}
-                                </td>
-                                <td className="tablecontent">
-                                    {row.equipmentCosts}
-                                </td>
-                                <td className="tablecontent">
-                                    {row.overheads}
-                                </td>
-                                <td className="tablecontent">
-                                    {row.estimatedProfit}
-                                </td>
-                            </tr>
+                            <EditableRow 
+                                row = {row} 
+                                deletedRow = {deletedRow} 
+                                key = {row.id}
+                                dispatchersNum = {[setsalary, setequipmentCosts, setoverheads,setestimatedProfit]}
+                                dispatcherStr = {setrowName} 
+                            />
                         ))}
                     </tbody>
                     <tfoot>
@@ -115,7 +103,8 @@ export const TableCanvas = () => {
                                 <TableInput 
                                     placeholder = "Статья работы" 
                                     id = "base-rowName"
-                                    onChange = {e => setrowName(e.target.value)} 
+                                    onChange = {e => setrowName(e.target.value)}
+                                    onKeyDown={e => onEnter(e, 'base')} 
                                 />
                             </td>
                             <td className="tablecontent">
@@ -123,7 +112,8 @@ export const TableCanvas = () => {
                                     type = "number" 
                                     placeholder = "Основная з/п" 
                                     id = "base-salary"
-                                    onChange = {e => setsalary(Number(e.target.value))}  
+                                    onChange = {e => setsalary(Number(e.target.value))}
+                                    onKeyDown={e => onEnter(e, 'base')}   
                                 />
                             </td>
                             <td className="tablecontent">
@@ -131,7 +121,8 @@ export const TableCanvas = () => {
                                     type = "number"  
                                     placeholder = "Оборудование" 
                                     id = "base-equipmentCosts"
-                                    onChange = {e => setequipmentCosts(Number(e.target.value))} 
+                                    onChange = {e => setequipmentCosts(Number(e.target.value))}
+                                    onKeyDown={e => onEnter(e, 'base')}  
                                 />
                             </td>
                             <td className="tablecontent">
@@ -139,7 +130,8 @@ export const TableCanvas = () => {
                                     type = "number" 
                                     placeholder = "Накладные расходы" 
                                     id = "base-overheads"
-                                    onChange = {e => setoverheads(Number(e.target.value))} 
+                                    onChange = {e => setoverheads(Number(e.target.value))}
+                                    onKeyDown={e => onEnter(e, 'base')}  
                                 />
                             </td>
                             <td className="tablecontent">
@@ -147,7 +139,8 @@ export const TableCanvas = () => {
                                     type = "number" 
                                     placeholder = "Сметная прибыль" 
                                     id = "base-estimatedProfit"
-                                    onChange = {e => setestimatedProfit(Number(e.target.value))}  
+                                    onChange = {e => setestimatedProfit(Number(e.target.value))}
+                                    onKeyDown={e => onEnter(e, 'base')}   
                                 />
                             </td>
                         </tr>

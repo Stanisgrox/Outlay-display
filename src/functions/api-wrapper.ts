@@ -64,3 +64,12 @@ export async function deleteRow(id: number) {
         return newData;
     } catch (err) {console.log(err)}
 }
+
+export async function updateRow(id:number, data: CRUDdata) {
+    try {
+        await axios.post(`${BASE_URL}/v1/outlay-rows/entity/${Entity.id}/row/${id}/update`, data);
+        const refreshedData = await getRows();
+        localStorage.setItem('data', JSON.stringify(refreshedData))
+        return refreshedData;
+    } catch (err) {console.log(err)}
+}

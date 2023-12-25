@@ -3,9 +3,10 @@ import { TableCanvas } from './components/main-ui/table-canvas';
 import { Sidenav } from './components/sidenav';
 
 function App() {
+
   return (
     <div className="App">
-      <main className='flex column justify-start'>
+      <main className='flex column justify-start' >
         <Header />
         
         <div className='flex grow'>
