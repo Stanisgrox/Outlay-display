@@ -1,0 +1,144 @@
+//BG AND FG COLOR VARS
+$bg-dark: #202124
+$bg-med: #27272A
+$grey: #A1A1AA
+$white: #FFF
+$borders: #414144
+
+//FONT SIZES
+$font-large: 18px
+$font-regular: 14px
+$font-small: 10px
+
+//RESETS
+button
+  background: none
+  color: inherit
+  border: none
+  padding: 0
+  font: inherit
+  outline: inherit
+  cursor: pointer
+
+//BODY SETUP
+body 
+  margin: 0
+  font-family:'Roboto', sans-serif
+  -webkit-font-smoothing: antialiased
+  -moz-osx-font-smoothing: grayscale
+  background-color: $bg-dark
+  font-size: $font-regular
+  color: $white
+
+main
+  min-height: 100vh
+  min-width: 100%
+
+//------------------
+//GENERAL USE STYLES
+//------------------
+
+.bg-med
+  background-color: $bg-med
+
+.flex
+  display: flex
+
+.active
+  background-color: $grey
+
+.innactive-text
+  color: $grey
+
+.bordered-R
+  border-right: 1px solid $borders
+
+.bordered-B
+  border-bottom: 1px solid $borders
+
+.grow
+  flex-grow: 1
+
+.column
+  flex-direction: column
+
+.justify-start
+  justify-content: start
+
+.font-small
+  font-size: $font-small
+
+.font-large
+  font-size: $font-large
+
+//----------------  
+//COMPONENT STYLES
+//----------------
+
+//SIDENAV
+.sidenav
+  width: 240px
+  max-width: 240px
+
+.sidenav-points
+  padding-top: 5px
+  padding-bottom: 5px
+  padding-left: 20px
+  align-items: center
+
+.sidenav-points img
+  margin-right: 14px
+
+.sidenav-topsection
+  padding-left: 20px
+  padding-top: 8px
+  padding-bottom: 8px
+  padding-right: 10px
+  width: 240px
+  -webkit-box-sizing: border-box
+  -moz-box-sizing: border-box   
+  box-sizing: border-box
+  justify-content: space-between
+
+//NAVBAR
+.navbar
+  padding-left: 20px
+  padding-top: 10px
+  padding-bottom: 10px
+
+.navbar-button
+  margin-right: 20px
+
+.navbar-tab
+  margin-left: 8px
+  margin-right: 16px
+  padding-left: 3px
+  padding-right: 3px
+  padding-bottom: 13px
+  margin-bottom: -10px
+
+.navbar-tab-active
+  border-bottom: 2px solid $white
+
+//WORK HEADER
+.workheader-point
+  padding-top: 11px
+  padding-bottom: 11px
+  padding-left: 15px
+  padding-right: 15px
+
+// MAIN TABLE
+.table-wrapper
+  padding-left: 10px
+  padding-right: 10px
+
+table
+  border-collapse: collapse
+  width: 100%
+
+.tableheader
+  padding: 12px
+  font-weight: normal
+
+.tablecontent
+  padding: 12px
