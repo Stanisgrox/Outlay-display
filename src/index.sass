@@ -142,3 +142,34 @@ table
 
 .tablecontent
   padding: 12px
+
+.button-wrapper
+  background-color: $borders
+  border-radius: 6px
+  padding-top: 2px
+  padding-bottom: 2px
+  padding-left: 2px
+  max-width: 55px
+
+.button-wrapper button
+  margin-right: 6px
+
+// INPUTS
+.table-input
+  background: none
+  border-radius: 6px
+  border: 1px solid $borders
+  padding: 10px
+  color: $white
+
+.table-input::placeholder
+  color: red
+  color: #71717A
+
+//FIXES
+input::-webkit-outer-spin-button,
+input::-webkit-inner-spin-button
+  -webkit-appearance: none
+  margin: 0
+input[type=number]
+  -moz-appearance: textfield

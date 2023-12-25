@@ -1,5 +1,11 @@
-export const TableInput = () => {
+import { InputHTMLAttributes } from "react"
+
+interface InputProps extends InputHTMLAttributes<HTMLInputElement> {
+
+}
+
+export const TableInput = (props: InputProps) => {
     return (
-        <input />
+        <input className="table-input" {...props}/>
     )
 }
