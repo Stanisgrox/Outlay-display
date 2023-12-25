@@ -7,6 +7,7 @@ interface IProps {
     deletedRow: any
     dispatchersNum: React.Dispatch<React.SetStateAction<number>>[]
     dispatcherStr: React.Dispatch<React.SetStateAction<string>>
+    recursionLevel?: number
 }
 
 
@@ -16,6 +17,8 @@ export const EditableRow = (props: IProps) => {
     const equipmentCosts = useRef(null);
     const overheads = useRef(null);
     const estimatedProfit = useRef(null);
+
+    const newRowTemplate = useRef(null);
 
     const [editingRow, setEditingRow] = useState(false);
 
@@ -55,73 +58,135 @@ export const EditableRow = (props: IProps) => {
         setEditingRow(false)
     }
 
+    let recursivity: number
+    if (!props.recursionLevel) recursivity = 0
+    else recursivity = props.recursionLevel;
 
-    return(
-        <tr className="bordered-B" key = {props.row.id} >
-            <td className="tablecontent">
-                <div className="button-wrapper flex">
-                    <button>
-                        <img src="/assets/file-ico.svg" alt="ico" />
+    function createRow () {
+        (newRowTemplate.current as unknown as HTMLTableRowElement).style.display  = "table-row";
+    }
+
+    return (
+        <>
+            <tr className="bordered-B" key = {props.row.id} >
+                <td 
+                    className="tablecontent"
+                    style={{
+                        paddingLeft: `${12 + recursivity * 20}px`
+                    }}
+                >
+                    <div className="button-wrapper flex">
+                        <button onClick={() => createRow()}>
+                            <img src="/assets/file-ico.svg" alt="ico" />
+                        </button>
+                        <button onClick={() => props.deletedRow(props.row.id!)}>
+                            <img src="/assets/trash-ico.svg" alt="ico" />
+                        </button>
+                    </div>
+                </td>
+                <td className="tablecontent">
+                    <TableInput
+                        readOnly = {!editingRow}
+                        defaultValue = {props.row.rowName}
+                        onClick = {() => setEditingRow(true)}
+                        onBlur = {(e) => onBlur(e)}
+                        onChange = {e => props.dispatcherStr(e.target.value)}
+                        innerref = {rowName} 
+                    />
+                </td>
+                <td className="tablecontent">
+                    <TableInput
+                        type = "number"
+                        readOnly = {!editingRow}
+                        defaultValue = {props.row.salary}
+                        onClick = {() => setEditingRow(true)}
+                        onBlur = {(e) => onBlur(e)}
+                        onChange = {e => props.dispatchersNum[0](Number (e.target.value))}
+                        innerref = {salary}  
+                    />
+                </td>
+                <td className="tablecontent">
+                    <TableInput
+                        type = "number"
+                        readOnly = {!editingRow}
+                        defaultValue = {props.row.equipmentCosts}
+                        onClick = {() => setEditingRow(true)}
+                        onBlur = {(e) => onBlur(e)}
+                        onChange = {e => props.dispatchersNum[1](Number (e.target.value))}
+                        innerref = {equipmentCosts}  
+                    />
+                </td>
+                <td className="tablecontent">
+                    <TableInput
+                        type = "number"
+                        readOnly = {!editingRow}
+                        defaultValue = {props.row.overheads}
+                        onClick = {() => setEditingRow(true)}
+                        onBlur = {(e) => onBlur(e)}
+                        onChange = {e => props.dispatchersNum[2](Number (e.target.value))}
+                        innerref = {overheads}  
+                    />
+                </td>
+                <td className="tablecontent">
+                    <TableInput
+                        type = "number"
+                        readOnly = {!editingRow}
+                        defaultValue = {props.row.estimatedProfit}
+                        onClick = {() => setEditingRow(true)}
+                        onBlur = {(e) => onBlur(e)}
+                        onChange = {e => props.dispatchersNum[3](Number (e.target.value))}
+                        innerref = {estimatedProfit}  
+                    />
+                </td>
+            </tr>
+
+            <tr 
+                className="bordered-B"
+                style={{
+                    display: 'none'
+                }}
+                ref = {newRowTemplate}
+            >
+                <td 
+                    className="tablecontent"
+                    style={{
+                        paddingLeft: `${12 + (recursivity + 1) * 20}px`
+                    }}
+                >
+                    <button id = "base-send" >
+                        <img src = "/assets/file-ico.svg" alt = "ico" />
                     </button>
-                    <button onClick={() => props.deletedRow(props.row.id!)}>
-                        <img src="/assets/trash-ico.svg" alt="ico" />
-                    </button>
-                </div>
-            </td>
-            <td className="tablecontent">
-                <TableInput
-                    readOnly = {!editingRow}
-                    defaultValue = {props.row.rowName}
-                    onClick = {() => setEditingRow(true)}
-                    onBlur = {(e) => onBlur(e)}
-                    onChange = {e => props.dispatcherStr(e.target.value)}
-                    innerref = {rowName} 
-                />
-            </td>
-            <td className="tablecontent">
-                <TableInput
-                    type = "number"
-                    readOnly = {!editingRow}
-                    defaultValue = {props.row.salary}
-                    onClick = {() => setEditingRow(true)}
-                    onBlur = {(e) => onBlur(e)}
-                    onChange = {e => props.dispatchersNum[0](Number (e.target.value))}
-                    innerref = {salary}  
-                />
-            </td>
-            <td className="tablecontent">
-                <TableInput
-                    type = "number"
-                    readOnly = {!editingRow}
-                    defaultValue = {props.row.equipmentCosts}
-                    onClick = {() => setEditingRow(true)}
-                    onBlur = {(e) => onBlur(e)}
-                    onChange = {e => props.dispatchersNum[1](Number (e.target.value))}
-                    innerref = {equipmentCosts}  
-                />
-            </td>
-            <td className="tablecontent">
-                <TableInput
-                    type = "number"
-                    readOnly = {!editingRow}
-                    defaultValue = {props.row.overheads}
-                    onClick = {() => setEditingRow(true)}
-                    onBlur = {(e) => onBlur(e)}
-                    onChange = {e => props.dispatchersNum[2](Number (e.target.value))}
-                    innerref = {overheads}  
-                />
-            </td>
-            <td className="tablecontent">
-                <TableInput
-                    type = "number"
-                    readOnly = {!editingRow}
-                    defaultValue = {props.row.estimatedProfit}
-                    onClick = {() => setEditingRow(true)}
-                    onBlur = {(e) => onBlur(e)}
-                    onChange = {e => props.dispatchersNum[3](Number (e.target.value))}
-                    innerref = {estimatedProfit}  
-                />
-            </td>
-        </tr>
+                </td>
+                <td className="tablecontent">
+                    <TableInput
+                        placeholder = "Статья работы"
+                    />
+                </td>
+                <td className="tablecontent">
+                    <TableInput
+                        type = "number"
+                        placeholder = "Основная з/п"
+                    />
+                </td>
+                <td className="tablecontent">
+                    <TableInput
+                        type = "number"
+                        placeholder = "Оборудование" 
+                    />
+                </td>
+                <td className="tablecontent">
+                    <TableInput
+                        type = "number"
+                        placeholder = "Накладные расходы" 
+                    />
+                </td>
+                <td className="tablecontent">
+                    <TableInput
+                        type = "number"
+                        placeholder = "Сметная прибыль" 
+                    />
+                </td>
+            </tr>
+        </>
     )
 }

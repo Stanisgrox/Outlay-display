@@ -4,6 +4,62 @@ import { WorkHeader } from "../work-header";
 import { TableInput } from "./input";
 import { EditableRow } from "./editable-row";
 
+interface TreeProps {
+    data: FullData [] | undefined
+    deletedRow: any
+    dispatchersNum: any[]
+    setrowName: any
+    recursionLevel: number
+}
+
+interface TreeItemProps extends Omit<TreeProps, 'data'> {
+    row: FullData
+}
+
+function RenderTree (props: TreeProps) {
+    return (
+        <>
+            {props.data?.map((row) => (
+                <>
+                    <TreeItem 
+                        row = {row}
+                        deletedRow = {props.deletedRow} 
+                        dispatchersNum = {[props.dispatchersNum[0], props.dispatchersNum[1], props.dispatchersNum[2],props.dispatchersNum[3]]}
+                        setrowName = {props.setrowName}
+                        recursionLevel = {props.recursionLevel}
+                        key = {row.id} 
+                    />
+                    {Array.isArray(row.child) && 
+                        <RenderTree 
+                            data = {row.child}
+                            deletedRow = {props.deletedRow} 
+                            dispatchersNum = {[props.dispatchersNum[0], props.dispatchersNum[1], props.dispatchersNum[2],props.dispatchersNum[3]]}
+                            setrowName = {props.setrowName}
+                            recursionLevel = {props.recursionLevel + 1}
+                        />
+                    }                  
+                </>
+            ))}
+        </>
+    )
+}
+
+function TreeItem (props: TreeItemProps) {
+    return (
+        <>
+            <EditableRow 
+                row = {props.row} 
+                deletedRow = {props.deletedRow} 
+                key = {props.row.id}
+                dispatchersNum = {[props.dispatchersNum[0], props.dispatchersNum[1], props.dispatchersNum[2],props.dispatchersNum[3]]}
+                dispatcherStr = {props.setrowName}
+                recursionLevel = {props.recursionLevel} 
+            />
+            
+        </>
+    )
+}
+
 
 export const TableCanvas = () => {
     const [data, setData] = useState<FullData[]>();
@@ -82,15 +138,13 @@ export const TableCanvas = () => {
                         </tr>
                     </thead>
                     <tbody>
-                        {data?.map((row: FullData) => (
-                            <EditableRow 
-                                row = {row} 
-                                deletedRow = {deletedRow} 
-                                key = {row.id}
-                                dispatchersNum = {[setsalary, setequipmentCosts, setoverheads,setestimatedProfit]}
-                                dispatcherStr = {setrowName} 
-                            />
-                        ))}
+                        <RenderTree 
+                            data={data}
+                            deletedRow = {deletedRow} 
+                            dispatchersNum = {[setsalary, setequipmentCosts, setoverheads, setestimatedProfit]}
+                            setrowName = {setrowName}
+                            recursionLevel = {0}
+                        />
                     </tbody>
                     <tfoot>
                         <tr className="bordered-B">
