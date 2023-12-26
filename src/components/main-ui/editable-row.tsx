@@ -127,6 +127,14 @@ export const EditableRow = (props: IProps) => {
                             background: buttonExpanded? '' : 'none'
                         }}
                     >
+                        <img 
+                            src="/assets/file-line.svg"
+                            alt='line'
+                            style={{
+                                display: recursivity > 0? 'block' : 'none'
+                            }}
+                            className = "recursivity-line"
+                        />
                         <button onClick={() => createRowTemplate()}>
                             <img src="/assets/file-ico.svg" alt="ico" />
                         </button>
@@ -206,7 +214,8 @@ export const EditableRow = (props: IProps) => {
                 <td 
                     className="tablecontent"
                     style={{
-                        paddingLeft: `${12 + (recursivity + 1) * 20}px`
+                        paddingLeft: `${12 + (recursivity + 1) * 20}px`,
+                        position: 'relative'
                     }}
                 >
                     <button>
