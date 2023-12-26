@@ -10,10 +10,7 @@ interface TreeProps {
     dispatchersNum: any[]
     setrowName: any
     recursionLevel: number
-}
-
-interface TreeItemProps extends Omit<TreeProps, 'data'> {
-    row: FullData
+    refresher: React.Dispatch<React.SetStateAction<FullData[] | undefined>>
 }
 
 function RenderTree (props: TreeProps) {
@@ -21,13 +18,13 @@ function RenderTree (props: TreeProps) {
         <>
             {props.data?.map((row) => (
                 <>
-                    <TreeItem 
+                    <EditableRow 
                         row = {row}
                         deletedRow = {props.deletedRow} 
                         dispatchersNum = {[props.dispatchersNum[0], props.dispatchersNum[1], props.dispatchersNum[2],props.dispatchersNum[3]]}
-                        setrowName = {props.setrowName}
+                        dispatcherStr = {props.setrowName}
                         recursionLevel = {props.recursionLevel}
-                        key = {row.id} 
+                        refresher = {props.refresher}
                     />
                     {Array.isArray(row.child) && 
                         <RenderTree 
@@ -36,26 +33,11 @@ function RenderTree (props: TreeProps) {
                             dispatchersNum = {[props.dispatchersNum[0], props.dispatchersNum[1], props.dispatchersNum[2],props.dispatchersNum[3]]}
                             setrowName = {props.setrowName}
                             recursionLevel = {props.recursionLevel + 1}
+                            refresher = {props.refresher}
                         />
                     }                  
                 </>
             ))}
-        </>
-    )
-}
-
-function TreeItem (props: TreeItemProps) {
-    return (
-        <>
-            <EditableRow 
-                row = {props.row} 
-                deletedRow = {props.deletedRow} 
-                key = {props.row.id}
-                dispatchersNum = {[props.dispatchersNum[0], props.dispatchersNum[1], props.dispatchersNum[2],props.dispatchersNum[3]]}
-                dispatcherStr = {props.setrowName}
-                recursionLevel = {props.recursionLevel} 
-            />
-            
         </>
     )
 }
@@ -137,64 +119,58 @@ export const TableCanvas = () => {
                             </td>
                         </tr>
                     </thead>
+
                     <tbody>
                         <RenderTree 
-                            data={data}
+                            data = {data}
                             deletedRow = {deletedRow} 
                             dispatchersNum = {[setsalary, setequipmentCosts, setoverheads, setestimatedProfit]}
                             setrowName = {setrowName}
                             recursionLevel = {0}
+                            refresher = {setData}
                         />
                     </tbody>
+
                     <tfoot>
                         <tr className="bordered-B">
-                            <td className="tablecontent">
-                                <button id = "base-send" onClick = {() => uploadRow('base')} >
-                                    <img src = "/assets/file-ico.svg" alt = "ico" />
-                                </button>
-                            </td>
-                            <td className="tablecontent">
+                            <td className = "tablecontent" />
+                            <td className = "tablecontent" >
                                 <TableInput 
                                     placeholder = "Статья работы" 
-                                    id = "base-rowName"
                                     onChange = {e => setrowName(e.target.value)}
-                                    onKeyDown={e => onEnter(e, 'base')} 
+                                    onKeyDown = {e => onEnter(e, 'base')} 
                                 />
                             </td>
                             <td className="tablecontent">
                                 <TableInput
                                     type = "number" 
                                     placeholder = "Основная з/п" 
-                                    id = "base-salary"
                                     onChange = {e => setsalary(Number(e.target.value))}
-                                    onKeyDown={e => onEnter(e, 'base')}   
+                                    onKeyDown = {e => onEnter(e, 'base')}   
                                 />
                             </td>
                             <td className="tablecontent">
                                 <TableInput
                                     type = "number"  
                                     placeholder = "Оборудование" 
-                                    id = "base-equipmentCosts"
                                     onChange = {e => setequipmentCosts(Number(e.target.value))}
-                                    onKeyDown={e => onEnter(e, 'base')}  
+                                    onKeyDown = {e => onEnter(e, 'base')}  
                                 />
                             </td>
                             <td className="tablecontent">
                                 <TableInput 
                                     type = "number" 
                                     placeholder = "Накладные расходы" 
-                                    id = "base-overheads"
                                     onChange = {e => setoverheads(Number(e.target.value))}
-                                    onKeyDown={e => onEnter(e, 'base')}  
+                                    onKeyDown = {e => onEnter(e, 'base')}  
                                 />
                             </td>
                             <td className="tablecontent">
                                 <TableInput 
                                     type = "number" 
                                     placeholder = "Сметная прибыль" 
-                                    id = "base-estimatedProfit"
                                     onChange = {e => setestimatedProfit(Number(e.target.value))}
-                                    onKeyDown={e => onEnter(e, 'base')}   
+                                    onKeyDown = {e => onEnter(e, 'base')}   
                                 />
                             </td>
                         </tr>

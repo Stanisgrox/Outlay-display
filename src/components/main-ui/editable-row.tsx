@@ -1,5 +1,5 @@
 import { useEffect, useRef, useState } from "react"
-import { CRUDdata, FullData, updateRow } from "../../functions/api-wrapper"
+import { CRUDdata, FullData, createRow, getRows, updateRow } from "../../functions/api-wrapper"
 import { TableInput } from "./input"
 
 interface IProps {
@@ -8,6 +8,7 @@ interface IProps {
     dispatchersNum: React.Dispatch<React.SetStateAction<number>>[]
     dispatcherStr: React.Dispatch<React.SetStateAction<string>>
     recursionLevel?: number
+    refresher: React.Dispatch<React.SetStateAction<FullData[] | undefined>>
 }
 
 
@@ -17,11 +18,20 @@ export const EditableRow = (props: IProps) => {
     const equipmentCosts = useRef(null);
     const overheads = useRef(null);
     const estimatedProfit = useRef(null);
-
+    //Children
     const newRowTemplate = useRef(null);
 
-    const [editingRow, setEditingRow] = useState(false);
+    const _rowName = useRef(null);
+    const _salary = useRef(null);
+    const _equipmentCosts = useRef(null);
+    const _overheads = useRef(null);
+    const _estimatedProfit = useRef(null);
 
+    //Main state
+    const [editingRow, setEditingRow] = useState(false);
+    const [buttonExpanded, setButtonExpanded] = useState(false);
+    //Children state
+    const [editingChildren, setEditingChildren] = useState(false);
 
     let nameInput = rowName.current;
     let salaryInput = salary.current;
@@ -62,24 +72,70 @@ export const EditableRow = (props: IProps) => {
     if (!props.recursionLevel) recursivity = 0
     else recursivity = props.recursionLevel;
 
-    function createRow () {
+    function createRowTemplate () {
         (newRowTemplate.current as unknown as HTMLTableRowElement).style.display  = "table-row";
+    }
+
+    async function uploadRow (key: string) {
+
+        const parentId = key === 'base'? null : Number(key);
+        
+        const data: CRUDdata = {
+            rowName: (_rowName.current as unknown as HTMLInputElement)!.value,
+            salary: Number((_salary.current as unknown as HTMLInputElement)!.value),
+            equipmentCosts: Number((_equipmentCosts.current as unknown as HTMLInputElement)!.value),
+            overheads: Number((_overheads.current as unknown as HTMLInputElement)!.value),
+            estimatedProfit: Number((_estimatedProfit.current as unknown as HTMLInputElement)!.value),
+            parentId: parentId,
+            mimExploitation: 0,
+            machineOperatorSalary: 0,
+            materials: 0,
+            mainCosts: 0,
+            supportCosts: 0,
+        }
+        return await createRow(data);
+    }
+
+    async function onEnter(event: React.KeyboardEvent<HTMLInputElement>, key: string) {
+        if (event.key === 'Enter') {
+            const newData = await uploadRow(key);
+            (newRowTemplate.current as unknown as HTMLTableRowElement).style.display  = "none";
+            props.refresher(newData);
+            setEditingRow(false);
+        } else return;
+    }
+
+    function ButtonHover (event: React.MouseEvent<HTMLDivElement, MouseEvent>) {
+        if (editingChildren || editingRow) return;
+        setButtonExpanded(true);
     }
 
     return (
         <>
-            <tr className="bordered-B" key = {props.row.id} >
+            <tr className="bordered-B" key = {props.row.id}>
                 <td 
                     className="tablecontent"
                     style={{
                         paddingLeft: `${12 + recursivity * 20}px`
                     }}
                 >
-                    <div className="button-wrapper flex">
-                        <button onClick={() => createRow()}>
+                    <div 
+                        className="button-wrapper flex"
+                        onMouseOver={(e) => ButtonHover(e)}
+                        onMouseOut={() => setButtonExpanded(false)}
+                        style={{
+                            background: buttonExpanded? '' : 'none'
+                        }}
+                    >
+                        <button onClick={() => createRowTemplate()}>
                             <img src="/assets/file-ico.svg" alt="ico" />
                         </button>
-                        <button onClick={() => props.deletedRow(props.row.id!)}>
+                        <button 
+                            onClick={() => props.deletedRow(props.row.id!)}
+                            style={{
+                                display: buttonExpanded? '' : 'none'
+                            }}
+                        >
                             <img src="/assets/trash-ico.svg" alt="ico" />
                         </button>
                     </div>
@@ -153,37 +209,52 @@ export const EditableRow = (props: IProps) => {
                         paddingLeft: `${12 + (recursivity + 1) * 20}px`
                     }}
                 >
-                    <button id = "base-send" >
+                    <button>
                         <img src = "/assets/file-ico.svg" alt = "ico" />
                     </button>
                 </td>
                 <td className="tablecontent">
                     <TableInput
                         placeholder = "Статья работы"
+                        innerref = {_rowName}
+                        onKeyDown={e => onEnter(e, props.row.id?.toString()!)}
+                        onClick = {() => setEditingChildren(true)}
                     />
                 </td>
                 <td className="tablecontent">
                     <TableInput
                         type = "number"
                         placeholder = "Основная з/п"
+                        innerref = {_salary}
+                        onKeyDown={e => onEnter(e, props.row.id?.toString()!)}
+                        onClick = {() => setEditingChildren(true)}
                     />
                 </td>
                 <td className="tablecontent">
                     <TableInput
                         type = "number"
-                        placeholder = "Оборудование" 
+                        placeholder = "Оборудование"
+                        innerref = {_equipmentCosts}
+                        onKeyDown={e => onEnter(e, props.row.id?.toString()!)}
+                        onClick = {() => setEditingChildren(true)} 
                     />
                 </td>
                 <td className="tablecontent">
                     <TableInput
                         type = "number"
-                        placeholder = "Накладные расходы" 
+                        placeholder = "Накладные расходы"
+                        innerref = {_overheads}
+                        onKeyDown={e => onEnter(e, props.row.id?.toString()!)}
+                        onClick = {() => setEditingChildren(true)}  
                     />
                 </td>
                 <td className="tablecontent">
                     <TableInput
                         type = "number"
-                        placeholder = "Сметная прибыль" 
+                        placeholder = "Сметная прибыль"
+                        innerref = {_estimatedProfit}
+                        onKeyDown={e => onEnter(e, props.row.id?.toString()!)}
+                        onClick = {() => setEditingChildren(true)} 
                     />
                 </td>
             </tr>

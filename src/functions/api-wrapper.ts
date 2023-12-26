@@ -27,23 +27,16 @@ export async function createRow (data: CRUDdata) {
     if (!data.rowName) return;
     if (!data.parentId) data.parentId = null;
 
-    var localData = JSON.parse(localStorage.getItem('data') || '{}') as FullData[];
+    try {
+        var localData = JSON.parse(localStorage.getItem('data') || '{}') as FullData[];
+        
+        await axios.post(`${BASE_URL}/v1/outlay-rows/entity/${Entity.id}/row/create`, data);
+        const newObject = await axios.get(`${BASE_URL}/v1/outlay-rows/entity/${Entity.id}/row/list`);
+        localData = newObject.data;
+        localStorage.setItem('data', JSON.stringify(localData));
 
-    if (data.parentId != null) {
-        const parent = localData.find(element => element.id === data.parentId);
-        if (!parent) return;
-        if (!parent.child) parent.child = [];
-
-        const newObject = await axios.post(`${BASE_URL}/v1/outlay-rows/entity/${Entity.id}/row/create`, data);
-        parent.child.push(newObject.data.current as FullData);
-        localData = localData.filter(item => item.id !== data.parentId)
-        localData.push(parent);
-    } else {
-        const newObject = await axios.post(`${BASE_URL}/v1/outlay-rows/entity/${Entity.id}/row/create`, data);
-        localData.push(newObject.data.current);
-    }
-    localStorage.setItem('data', JSON.stringify(localData));
-    return localData;
+        return localData;
+    } catch(err) {console.log(err)}
 }
 
 export async function getRows() {
@@ -58,10 +51,12 @@ export async function getRows() {
 export async function deleteRow(id: number) {
     try {
         await axios.delete(`${BASE_URL}/v1/outlay-rows/entity/${Entity.id}/row/${id}/delete`);
+        
         const localData = JSON.parse(localStorage.getItem('data') || '{}');
         const newData = localData.filter((item: { id: number }) => item.id !== id);
         localStorage.setItem('data', JSON.stringify(newData));
-        return newData;
+
+        return (await axios.get(`${BASE_URL}/v1/outlay-rows/entity/${Entity.id}/row/list`)).data;
     } catch (err) {console.log(err)}
 }
 
